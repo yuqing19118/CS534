@@ -13,7 +13,7 @@ for level = 1:size(P,2)
     % think about how to define "fine" or "coarse" levels of pyramid?
     % change 30?
     % use 5x5 neighborhood
-    if size(dim) >= 30
+    if dim >= 30
         % padding to add zeros around for border
         padded = zeros([width,length]+4);
         padded(3:end-2,3:end-2) = P{level};
@@ -21,11 +21,11 @@ for level = 1:size(P,2)
         for row = 3:size(padded,1)-2
             for col = 3:size(padded,2)-2
                 neighborhood = padded(row-2:row+2,col-2:col+2);
-                featureVector = neighborhood(:)';
+                featureVector = reshape(neighborhood.',1,[]);
                 features{row-2,col-2} = featureVector;
             end
         end
-        F{levels} = features;
+        F{level} = features;
     % use 3x3 neighborhood
     else
         % padding to add zeros around for border
