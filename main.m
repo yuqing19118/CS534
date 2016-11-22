@@ -22,3 +22,8 @@ yB = yiqB(:,:,1);
 gpA = ComputeGaussianPyramid(yA);
 gpAprime = ComputeGaussianPyramid(yAprime);
 gpB = ComputeGaussianPyramid(yB);
+
+% compute features for A, Aprime, B
+featuresA = ComputeFeatures(gpA);
+featuresAprime = ComputeFeatures(gpAprime);
+featuresB = ComputeFeatures(gpB);
