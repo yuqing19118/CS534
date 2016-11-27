@@ -33,10 +33,10 @@ flannB = InitializeSearchStructures(featuresB);
 
 % compute Bprime, pixel by pixel
 gpBprime = cell(1,size(featuresB,2));
-for row = 1:size(featuresB{4},1)
-    for col = 1:size(featuresB{4},2)
-        [ x, y ] = BestApproximateMatch(gpA, gpB, flannA, flannB, 4, row, col);
-        gpBprime{4}(row, col) = gpAprime{4}(x,y);
+for row = 1:size(featuresB{1},1)
+    for col = 1:size(featuresB{1},2)
+        [ x, y ] = BestApproximateMatch(gpA, gpB, flannA, flannB, 1, row, col);
+        gpBprime{1}(row, col) = gpAprime{1}(x,y);
     end
 end
 
@@ -56,10 +56,10 @@ end
 %}
 
 % get Y channel of Bprime
-yBprime = gpBprime{4};
+yBprime = gpBprime{1};
 % combine with original IQ channels
 yiqBprime = cat(3, yBprime,yiqB(:,:,2),yiqB(:,:,3));
 
 % YIQ to RGB
 Bprime = ntsc2rgb(yiqBprime);
-imwrite(Bprime, 'images/smallBprime.jpg', 'jpg');
+imwrite(Bprime, 'images/Bprime.jpg', 'jpg');
