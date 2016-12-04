@@ -12,11 +12,10 @@ for i = 1:max(s(row,col),1)
   for j = 1:max(s(row,col),2)
     
     % Done, (i,j) is the original pixel
-    if i == row && j == col
+    if i ~= row || j ~= col
     %done
 
-       break
-    end
+ 
        s_i = s{level}(i,j,1);
        s_j = s{level}(i,j,2);
     
@@ -38,6 +37,7 @@ for i = 1:max(s(row,col),1)
       mindist = dist;
       best_coh_row = F_match_row;
       best_coh_col = F_match_col;
+     end
     end
   end
 end
