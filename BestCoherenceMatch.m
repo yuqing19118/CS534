@@ -29,7 +29,7 @@ for i = 1:max(s(row,col),1)
     end
     
     % Grab the corresponding pixels from gpAprime. 
-    Featurematrix_aprime=ComputeFeatures(gpAprime){level}(F_match_row,F_match_col);
+    Featurematrix_aprime=ComputeFeatures(gpAprime){level}{F_match_row,F_match_col};
 
       dist = sum((Featurematrix_aprime(:) - F_q(:)).^2);
       
