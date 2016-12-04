@@ -31,6 +31,7 @@ featuresB = ComputeFeatures(gpB);
 flannA = InitializeSearchStructures(featuresA);
 flannB = InitializeSearchStructures(featuresB);
 
+%{
 % compute Bprime, pixel by pixel
 gpBprime = cell(1,size(featuresB,2));
 for row = 1:size(featuresB{1},1)
@@ -39,21 +40,22 @@ for row = 1:size(featuresB{1},1)
         gpBprime{1}(row, col) = gpAprime{1}(x,y);
     end
 end
+%}
 
-%{
+
 % compute Bprime, pixel by pixel
 gpBprime = cell(1,size(featuresB,2));
 s = cell(1,size(featuresB,2));
 for level = size(gpBprime,2):1
     for row = 1:size(featuresB{level},1)
         for col = 1:size(featuresB{level},2)
-            [ x, y ] = BestMatch(gpA, gpAprime, gpB, gpBprime, s, level, row, col);
+            [ x, y ] = BestMatch(featuresA, featuresAprime, featuresB, gpBprime, flannA, flannB, s, level, row, col);
             gpBprime{level}(row, col) = gpAprime{level}(x,y);
             s{level}(row, col) = [ x, y ];
         end
     end
 end
-%}
+
 
 % get Y channel of Bprime
 yBprime = gpBprime{1};
