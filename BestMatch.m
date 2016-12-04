@@ -2,7 +2,7 @@ function [ x, y ] = BestMatch( featuresA, featuresAprime, featuresB, gpA, gpApri
 % BestMatch using FLANN and BestCoherenceMatch
 
 [ xapp, yapp ] = BestApproximateMatch( gpA, gpB, flannA, flannB, 1, row, col );
-[ xcoh, ycoh ] = BestCoherenceMatch( gpA, gpAprime, gpB, gpBprime, s, level, row, col );
+[ xcoh, ycoh ] = BestCoherenceMatch( gpA, gpAprime, gpB, gpBprime, featuresAprime, s, level, row, col );
 
 % get feature vectors
 % get fvapp

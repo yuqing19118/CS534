@@ -42,7 +42,25 @@ for row = 1:size(featuresB{1},1)
 end
 %}
 
+% trying the smallest level
+% compute Bprime, pixel by pixel
+gpBprime = cell(1,size(featuresB,2));
+% make gpBprime full of zeros
+for level = 1:size(gpB,2)
+    gpBprime{level} = zeros(size(gpB{level},1),size(gpB{level},2));
+end
 
+s = cell(1,size(featuresB,2));
+for row = 1:size(featuresB{1},1)
+    for col = 1:size(featuresB{1},2)
+        [ x, y ] = BestMatch(featuresA, featuresAprime, featuresB, gpA, gpAprime, gpB, gpBprime, flannA, flannB, s, 1, row, col);
+        gpBprime{1}(row, col) = gpAprime{1}(x,y);
+        s{1}(row, col) = [ x, y ];
+    end
+end
+
+% for all levels
+%{
 % compute Bprime, pixel by pixel
 gpBprime = cell(1,size(featuresB,2));
 s = cell(1,size(featuresB,2));
@@ -55,7 +73,7 @@ for level = size(gpBprime,2):1
         end
     end
 end
-
+%}
 
 % get Y channel of Bprime
 yBprime = gpBprime{1};
