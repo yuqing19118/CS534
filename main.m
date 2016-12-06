@@ -94,3 +94,12 @@ yiqBprime = cat(3, yBprime,yiqB(:,:,2),yiqB(:,:,3));
 Bprime = ntsc2rgb(yiqBprime);
 imwrite(Bprime, 'images/bigBprime.jpg', 'jpg');
 imwrite(gpBprime{3}, 'images/bigBprimelevel3.jpg', 'jpg');
+
+%{
+yBprime = gpBprime{3};
+resize = imresize(B,[120 160]);
+yiqBsmall = rgb2ntsc(resize);
+yiqBprime = cat(3, yBprime,yiqBsmall(:,:,2),yiqBsmall(:,:,3));
+Bprime = ntsc2rgb(yiqBprime);
+imwrite(Bprime, 'images/bigBprimelevel3.jpg', 'jpg');
+%}
