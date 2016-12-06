@@ -1,9 +1,9 @@
 clear;
 
 % read input images
-A = imread('images/Abig.jpg');
-Aprime = imread('images/Aprimebig.jpg');
-B = imread('images/Bbig.jpg');
+A = imread('images/bigA.jpg');
+Aprime = imread('images/bigAprime.jpg');
+B = imread('images/bigB.jpg');
 
 % RGB to YIQ color space
 yiqA = rgb2ntsc(A);
@@ -60,11 +60,12 @@ for level = 1:size(gpB,2)
     end
 end
 
-for row = 1:size(featuresB{1},1)
-    for col = 1:size(featuresB{1},2)
-        [ x, y ] = BestMatch(featuresA, featuresAprime, featuresB, gpA, gpAprime, gpB, gpBprime, flannA, flannB, s, 1, row, col);
-        gpBprime{1}(row, col) = gpAprime{1}(x,y);
-        s{1}{row, col} = [ x y ];
+% image analogy, change level in 6 places in the following lines
+for row = 1:size(featuresB{3},1)
+    for col = 1:size(featuresB{3},2)
+        [ x, y ] = BestMatch(featuresA, featuresAprime, featuresB, gpA, gpAprime, gpB, gpBprime, flannA, flannB, s, 3, row, col);
+        gpBprime{3}(row, col) = gpAprime{3}(x,y);
+        s{3}{row, col} = [ x y ];
     end
 end
 
@@ -91,4 +92,5 @@ yiqBprime = cat(3, yBprime,yiqB(:,:,2),yiqB(:,:,3));
 
 % YIQ to RGB
 Bprime = ntsc2rgb(yiqBprime);
-imwrite(Bprime, 'images/Bprimebig.jpg', 'jpg');
+imwrite(Bprime, 'images/bigBprime.jpg', 'jpg');
+imwrite(gpBprime{3}, 'images/bigBprimelevel3.jpg', 'jpg');

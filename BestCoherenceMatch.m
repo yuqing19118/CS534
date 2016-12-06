@@ -12,8 +12,8 @@ best_coh_row = 1;
 best_coh_col = 1;
 
 % Loop over neighborhood
-diff=(sqrt(length(featuresAprime{level,1}{row,col}))-1)/2;
-if (row > diff && row+diff < size(featuresAprime{level},1)) && (col > diff && coll+diff < size(featuresAprime{level},2))
+diff=(sqrt(length(featuresAprime{level}{row,col}))-1)/2;
+if (row > diff && row+diff < size(featuresAprime{level},1)) && (col > diff && col+diff < size(featuresAprime{level},2))
  for i = row-diff:row+diff 
    for j = col-diff:col+diff
     
@@ -27,7 +27,9 @@ if (row > diff && row+diff < size(featuresAprime{level},1)) && (col > diff && co
     F_match_col = s_j + (col - j); 
     % may not be necessary
     if F_match_row > boundrow || F_match_row < 1 || F_match_col > boundcol || F_match_col < 1
-%       fprintf(`Error occurs and cannot continue at (%d, %d)\n', F_match_row , F_match_col );
+       % fprintf('Error occurs and cannot continue at (%d, %d)\n', F_match_row , F_match_col );
+       F_match_row = 1;
+       F_match_col = 1; 
     end
     
     % Grab the corresponding pixels from gpAprime. 
