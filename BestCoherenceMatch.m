@@ -7,15 +7,19 @@ F_q = featuresgpBprime{level}{row,col};
 mindist = inf;
 [boundrow, boundcol]=size(gpA{level});
 
+% default values for best_coh_row and best_coh_col
+best_coh_row = 1;
+best_coh_col = 1;
 
 % Loop over neighborhood
 diff=(sqrt(length(featuresAprime{level,1}{row,col}))-1)/2;
+if (row > diff && row+diff < size(featuresAprime{level},1)) && (col > diff && coll+diff < size(featuresAprime{level},2))
  for i = row-diff:row+diff 
    for j = col-diff:col+diff
     
  
-       s_i = s{level}{i,j};
-       s_j = s{level}{i,j};
+       s_i = s{level}{i,j}(1,1);
+       s_j = s{level}{i,j}(1,2);
     
     % A coherent pixel match for q
     % A neighbor to our neighbor's match
@@ -37,5 +41,6 @@ diff=(sqrt(length(featuresAprime{level,1}{row,col}))-1)/2;
       best_coh_col = F_match_col;
      end
     end
-  end
+ end
+end
 end

@@ -1,9 +1,9 @@
 clear;
 
 % read input images
-A = imread('images/A.jpg');
-Aprime = imread('images/Aprime.jpg');
-B = imread('images/B.jpg');
+A = imread('images/Abig.jpg');
+Aprime = imread('images/Aprimebig.jpg');
+B = imread('images/Bbig.jpg');
 
 % RGB to YIQ color space
 yiqA = rgb2ntsc(A);
@@ -51,11 +51,20 @@ for level = 1:size(gpB,2)
 end
 
 s = cell(1,size(featuresB,2));
+% make gpBprime full of zeros
+for level = 1:size(gpB,2)
+    for row = 1:size(gpB{level},1)
+        for col = 1:size(gpB{level},2)
+            s{level}{row, col} = zeros(1,2);
+        end
+    end
+end
+
 for row = 1:size(featuresB{1},1)
     for col = 1:size(featuresB{1},2)
         [ x, y ] = BestMatch(featuresA, featuresAprime, featuresB, gpA, gpAprime, gpB, gpBprime, flannA, flannB, s, 1, row, col);
         gpBprime{1}(row, col) = gpAprime{1}(x,y);
-        s{1}(row, col) = [ x, y ];
+        s{1}{row, col} = [ x y ];
     end
 end
 
@@ -82,4 +91,4 @@ yiqBprime = cat(3, yBprime,yiqB(:,:,2),yiqB(:,:,3));
 
 % YIQ to RGB
 Bprime = ntsc2rgb(yiqBprime);
-imwrite(Bprime, 'images/Bprime.jpg', 'jpg');
+imwrite(Bprime, 'images/Bprimebig.jpg', 'jpg');
