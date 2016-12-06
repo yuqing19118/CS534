@@ -9,13 +9,10 @@ mindist = inf;
 
 
 % Loop over neighborhood
-for i = 1:size(s{level},1)
-  for j = 1:size(s{level},2)
+diff=(sqrt(length(featuresAprime{level,1}{row,col}))-1)/2;
+ for i = row-diff:row+diff 
+   for j = col-diff:col+diff
     
-    % Done, (i,j) is the original pixel
-    if i ~= row || j ~= col
-    %done
-
  
        s_i = s{level}{i,j};
        s_j = s{level}{i,j};
@@ -41,5 +38,4 @@ for i = 1:size(s{level},1)
      end
     end
   end
-end
 end
