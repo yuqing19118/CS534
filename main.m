@@ -101,5 +101,5 @@ resize = imresize(B,[120 160]);
 yiqBsmall = rgb2ntsc(resize);
 yiqBprime = cat(3, yBprime,yiqBsmall(:,:,2),yiqBsmall(:,:,3));
 Bprime = ntsc2rgb(yiqBprime);
-imwrite(Bprime, 'images/bigBprimelevel3.jpg', 'jpg');
+%imwrite(Bprime, 'images/bigBprimelevel3.jpg', 'jpg');
 %}

@@ -5,45 +5,47 @@ function [ x, y ] = BestMatch( featuresA, featuresAprime, featuresB, gpA, gpApri
 [ xcoh, ycoh ] = BestCoherenceMatch( gpA, gpAprime, gpB, gpBprime, featuresAprime, s, level, row, col );
 
 % get feature vectors
+
 % get fvapp
-if size(featuresAprime{level}{xapp, yapp},2) == 25
-    neighborhood = zeros(1,25);
-    neighborhood(:,1:12) = featuresAprime{level}{xapp, yapp}(:,1:12);
+if size(featuresA{level}{xapp, yapp},2) == 25
+    neighborhood = featuresA{level}{xapp, yapp};
     fvapp = reshape(neighborhood,[5,5]).';
 else
-    neighborhood = zeros(1,9);
-    neighborhood(:,1:4) = featuresAprime{level}{xapp, yapp}(:,1:4);
+    neighborhood = featuresA{level}{xapp, yapp};
     fvapp = reshape(neighborhood,[3,3]).';
 end
 
 % get fvcoh
 if size(featuresAprime{level}{xcoh, ycoh},2) == 25
-    neighborhood = zeros(1,25);
-    neighborhood(:,1:12) = featuresAprime{level}{xcoh, ycoh}(:,1:12);
+    neighborhood = featuresA{level}{xcoh, ycoh};
     fvcoh = reshape(neighborhood,[5,5]).';
 else
-    neighborhood = zeros(1,9);
-    neighborhood(:,1:4) = featuresAprime{level}{xcoh, ycoh}(:,1:4);
+    neighborhood = featuresA{level}{xcoh, ycoh};
     fvcoh = reshape(neighborhood,[3,3]).';
 end
 
-% get feature vector in Bprime
-featuresBprime = ComputeFeatures(gpBprime);
-% get fvq
-if size(featuresBprime{level}{row, col},2) == 25
-    neighborhood = zeros(1,25);
-    neighborhood(:,1:12) = featuresBprime{level}{row, col}(:,1:12);
-    fvq = reshape(neighborhood,[5,5]).';
-    gauss = fspecial('gaussian',5);
-    gauss(3,4:end) = 0;
-    gauss(4:end,:) = 0;
+% get window size: 5x5 or 3x3
+diff=(sqrt(length(featuresAprime{level}{row,col}))-1)/2;
+
+if (row > diff && row+diff < size(featuresAprime{level},1)) && (col > diff && col+diff < size(featuresAprime{level},2))
+    % get fvq
+    if diff == 2 % 5x5
+        neighborhood = featuresB{level}{row, col};
+        fvq = reshape(neighborhood,[5,5]).';
+        gauss = fspecial('gaussian',5);
+    else % 3x3
+        neighborhood = featuresB{level}{row, col};
+        fvq = reshape(neighborhood,[3,3]).';
+        gauss = fspecial('gaussian',3);
+    end
 else
-    neighborhood = zeros(1,9);
-    neighborhood(:,1:4) = featuresBprime{level}{row, col}(:,1:4);
-    fvq = reshape(neighborhood,[3,3]).';
-    gauss = fspecial('gaussian',3);
-    gauss(2,2:end) = 0;
-    gauss(3:end,:) = 0;
+    if diff == 2
+        fvq = zeros(5,5);
+        gauss = fspecial('gaussian',5);
+    else
+        fvq = zeros(3,3);
+        gauss = fspecial('gaussian',3);
+    end
 end
 
 dapp = sum(gauss.* (fvapp - fvq)).^2;

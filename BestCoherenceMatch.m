@@ -1,9 +1,24 @@
 function [ best_coh_row,best_coh_col ] = BestCoherenceMatch( gpA, gpAprime, gpB, gpBprime, featuresAprime, s, level, row, col )
 
+% get window size: 5x5 or 3x3
+diff=(sqrt(length(featuresAprime{level}{row,col}))-1)/2;
 
-% Best coherencematch
-featuresgpBprime = ComputeFeatures(gpBprime);
-F_q = featuresgpBprime{level}{row,col};
+% get F_q
+if diff == 2
+    F_q = zeros(5,5);
+else
+    F_q = zeros(3,3);
+end
+
+if (row > diff && row+diff < size(featuresAprime{level},1)) && (col > diff && col+diff < size(featuresAprime{level},2))
+    % get F_q
+    if diff == 2
+        F_q = gpBprime{level}(row-2:row+2,col-2:col+2);
+    else
+        F_q = gpBprime{level}(row-1:row+1,col-1:col+1);
+    end
+end
+
 mindist = inf;
 [boundrow, boundcol]=size(gpA{level});
 
@@ -12,7 +27,6 @@ best_coh_row = 1;
 best_coh_col = 1;
 
 % Loop over neighborhood
-diff=(sqrt(length(featuresAprime{level}{row,col}))-1)/2;
 if (row > diff && row+diff < size(featuresAprime{level},1)) && (col > diff && col+diff < size(featuresAprime{level},2))
  for i = row-diff:row+diff 
    for j = col-diff:col+diff
