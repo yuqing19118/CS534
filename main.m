@@ -24,12 +24,15 @@ gpAprime = ComputeGaussianPyramid(yAprime);
 gpB = ComputeGaussianPyramid(yB);
 
 % compute features for A, Aprime, B
-featuresA = ComputeFeatures(gpA);
-featuresAprime = ComputeFeatures(gpAprime);
-featuresB = ComputeFeatures(gpB);
+featuresA3x3 = ComputeFeatures(gpA,3);
+featuresA5x5 = ComputeFeatures(gpA,5);
+featuresAprime3x3 = ComputeFeatures(gpAprime,3);
+featuresAprime5x5 = ComputeFeatures(gpAprime,5);
+featuresB3x3 = ComputeFeatures(gpB,3);
+featuresB5x5 = ComputeFeatures(gpB,5);
 
-flannA = InitializeSearchStructures(featuresA);
-flannB = InitializeSearchStructures(featuresB);
+flannA = InitializeSearchStructures(featuresA5x5);
+flannB = InitializeSearchStructures(featuresB5x5);
 
 %{
 % compute Bprime, pixel by pixel
@@ -44,14 +47,14 @@ end
 
 % trying the smallest level
 % compute Bprime, pixel by pixel
-gpBprime = cell(1,size(featuresB,2));
+gpBprime = cell(1,size(featuresB5x5,2));
 % make gpBprime full of zeros
 for level = 1:size(gpB,2)
     gpBprime{level} = zeros(size(gpB{level},1),size(gpB{level},2));
 end
 
-s = cell(1,size(featuresB,2));
-% make gpBprime full of zeros
+s = cell(1,size(featuresB5x5,2));
+% make s full of zeros
 for level = 1:size(gpB,2)
     for row = 1:size(gpB{level},1)
         for col = 1:size(gpB{level},2)
@@ -61,11 +64,13 @@ for level = 1:size(gpB,2)
 end
 
 % image analogy, change level in 6 places in the following lines
-for row = 1:size(featuresB{3},1)
-    for col = 1:size(featuresB{3},2)
-        [ x, y ] = BestMatch(featuresA, featuresAprime, featuresB, gpA, gpAprime, gpB, gpBprime, flannA, flannB, s, 3, row, col);
-        gpBprime{3}(row, col) = gpAprime{3}(x,y);
-        s{3}{row, col} = [ x y ];
+for level = size(gpBprime,2): -1 : 5
+    for row = 1:size(featuresB5x5{level},1)
+        for col = 1:size(featuresB5x5{level},2)
+            [ x, y ] = BestMatch(featuresA3x3, featuresA5x5, featuresAprime3x3, featuresAprime5x5, featuresB3x3, featuresB5x5, gpA, gpAprime, gpB, gpBprime, flannA, flannB, s, level, row, col);
+            gpBprime{level}(row, col) = gpAprime{level}(x,y);
+            s{level}{row, col} = [ x y ];
+        end
     end
 end
 
@@ -92,14 +97,13 @@ yiqBprime = cat(3, yBprime,yiqB(:,:,2),yiqB(:,:,3));
 
 % YIQ to RGB
 Bprime = ntsc2rgb(yiqBprime);
-imwrite(Bprime, 'images/bigBprime.jpg', 'jpg');
-imwrite(gpBprime{3}, 'images/bigBprimelevel3.jpg', 'jpg');
+%imwrite(Bprime, 'images/bigBprime.jpg', 'jpg');
 
-%{
-yBprime = gpBprime{3};
-resize = imresize(B,[120 160]);
+
+yBprime = gpBprime{2};
+resize = imresize(B,size(gpBprime{4}));
 yiqBsmall = rgb2ntsc(resize);
 yiqBprime = cat(3, yBprime,yiqBsmall(:,:,2),yiqBsmall(:,:,3));
 Bprime = ntsc2rgb(yiqBprime);
-%imwrite(Bprime, 'images/bigBprimelevel3.jpg', 'jpg');
-%}
+imshow(Bprime);
+imwrite(Bprime, 'images/bigBprimelevel2.jpg', 'jpg');

@@ -1,58 +1,80 @@
-function [ x, y ] = BestMatch( featuresA, featuresAprime, featuresB, gpA, gpAprime, gpB, gpBprime, flannA, flannB, s, level, row, col )
+function [ x, y ] = BestMatch( featuresA3x3, featuresA5x5, featuresAprime3x3, featuresAprime5x5, featuresB3x3, featuresB5x5, gpA, gpAprime, gpB, gpBprime, flannA, flannB, s, level, row, col )
 % BestMatch using FLANN and BestCoherenceMatch
 
 [ xapp, yapp ] = BestApproximateMatch( gpA, gpB, flannA, flannB, level, row, col );
-[ xcoh, ycoh ] = BestCoherenceMatch( gpA, gpAprime, gpB, gpBprime, featuresAprime, s, level, row, col );
+[ xcoh, ycoh ] = BestCoherenceMatch( gpA, gpAprime, gpB, gpBprime, featuresA3x3, featuresA5x5, featuresAprime3x3, featuresAprime5x5, featuresB3x3, featuresB5x5, s, level, row, col );
 
 % get feature vectors
+% find closest corresponding pixel in coarse level
+xapp3x3 = floor(xapp/2);
+yapp3x3 = floor(yapp/2);
+% if first row and/or first col, set it to (1,1)
+if xapp3x3 == 0 || yapp3x3 == 0 
+    xapp3x3 = 1;
+    yapp3x3 = 1;
+end
+% find closest corresponding pixel in coarse level
+xcoh3x3 = floor(xcoh);
+ycoh3x3 = floor(ycoh);
+% if first row and/or first col, set it to (1,1)
+if xcoh3x3 == 0 || ycoh3x3 == 0 
+    xcoh3x3 = 1;
+    ycoh3x3 = 1;
+end
 
 % get fvapp
-if size(featuresA{level}{xapp, yapp},2) == 25
-    neighborhood = featuresA{level}{xapp, yapp};
-    fvapp = reshape(neighborhood,[5,5]).';
-else
-    neighborhood = featuresA{level}{xapp, yapp};
-    fvapp = reshape(neighborhood,[3,3]).';
-end
+fvAapp3x3 = featuresA3x3{level}{xapp3x3, yapp3x3};
+fvAprimeapp3x3 = featuresAprime3x3{level}{xapp3x3, yapp3x3};
+fvAapp5x5 = featuresA5x5{level}{xapp, yapp};
+fvAprimeapp5x5 = featuresAprime5x5{level}{xapp, yapp};
+fvapp = [fvAapp3x3 fvAprimeapp3x3 fvAapp5x5 fvAprimeapp5x5];
 
 % get fvcoh
-if size(featuresAprime{level}{xcoh, ycoh},2) == 25
-    neighborhood = featuresA{level}{xcoh, ycoh};
-    fvcoh = reshape(neighborhood,[5,5]).';
+fvAcoh3x3 = featuresA3x3{level}{xcoh3x3, ycoh3x3};
+fvAprimecoh3x3 = featuresAprime3x3{level}{xcoh3x3, ycoh3x3};
+fvAcoh5x5 = featuresA5x5{level}{xcoh, ycoh};
+fvAprimecoh5x5 = featuresAprime5x5{level}{xcoh, ycoh};
+fvcoh = [fvAcoh3x3 fvAprimecoh3x3 fvAcoh5x5 fvAprimecoh5x5];
+
+% get fvq
+% find closest corresponding pixel in coarse level
+row3x3 = floor(row/2);
+col3x3 = floor(col/2);
+% if first row and/or first col, set it to (1,1)
+if row3x3 == 0 || col3x3 == 0 || row3x3 == 1 || col3x3 == 1
+    row3x3 = 3;
+    col3x3 = 3;
+end
+fvB3x3 = featuresB3x3{level}{row3x3, col3x3};
+fvB5x5 = featuresB5x5{level}{row, col};
+
+% avoid border pixels
+if (row > 2 && row < size(featuresAprime5x5{level},1)-1) && ... 
+(col > 2 && col < size(featuresAprime5x5{level},2)-1)
+    % get fvBprime
+    fvBprimematrix3x3 = gpBprime{level}(row3x3-1:row3x3+1,col3x3-1:col3x3+1);
+    fvBprime3x3 = reshape(fvBprimematrix3x3.',[1,9]);
+    fvBprimematrix5x5 = gpBprime{level}(row-2:row+2,col-2:col+2);
+    fvBprime5x5 = reshape(fvBprimematrix5x5.',[1,25]);
+    fvq = [fvB3x3 fvBprime3x3 fvB5x5 fvBprime5x5];
 else
-    neighborhood = featuresA{level}{xcoh, ycoh};
-    fvcoh = reshape(neighborhood,[3,3]).';
+    fvq = zeros(1,68);
 end
 
-% get window size: 5x5 or 3x3
-diff=(sqrt(length(featuresAprime{level}{row,col}))-1)/2;
+% get Gaussian: 5x5 & 3x3
+g3x3 = fspecial('gaussian',3);
+g5x5 = fspecial('gaussian',5);
+% reshape to a row vector
+gvec3x3 = reshape(g3x3,[1,9]);
+gvec5x5 = reshape(g5x5,[1,25]);
+% make it match size of fvapp, fvcoh, fvq
+gauss = [gvec3x3 gvec3x3 gvec5x5 gvec5x5];
 
-if (row > diff && row+diff < size(featuresAprime{level},1)) && (col > diff && col+diff < size(featuresAprime{level},2))
-    % get fvq
-    if diff == 2 % 5x5
-        neighborhood = featuresB{level}{row, col};
-        fvq = reshape(neighborhood,[5,5]).';
-        gauss = fspecial('gaussian',5);
-    else % 3x3
-        neighborhood = featuresB{level}{row, col};
-        fvq = reshape(neighborhood,[3,3]).';
-        gauss = fspecial('gaussian',3);
-    end
-else
-    if diff == 2
-        fvq = zeros(5,5);
-        gauss = fspecial('gaussian',5);
-    else
-        fvq = zeros(3,3);
-        gauss = fspecial('gaussian',3);
-    end
-end
-
-dapp = sum(gauss.* (fvapp - fvq)).^2;
-dcoh = sum(gauss.* (fvcoh - fvq)).^2;
+dapp = sum(gauss(:,1:55).* (fvapp(:,1:55) - fvq(:,1:55))).^2;
+dcoh = sum(gauss(:,1:55).* (fvcoh(:,1:55) - fvq(:,1:55))).^2;
 
 % maybe change value of kappa
-kappa = 12;
+kappa = 5;
 if dcoh <= dapp * (1 + 2^(level - size(gpB,2) * kappa))
     x = xcoh;
     y = ycoh;

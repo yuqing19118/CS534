@@ -1,4 +1,4 @@
-function [ F ] = ComputeFeatures( P )
+function [ F ] = ComputeFeatures( P , dim )
 % Computes features for input Gaussian Pyramid P
 
 % F is a cell which contains a cell for each level of P
@@ -8,12 +8,11 @@ F = cell(1, size(P,2));
 for level = 1:size(P,2)
     width = size(P{level},1);
     length = size(P{level},2);
-    dim = min(width, length);
 
     % think about how to define "fine" or "coarse" levels of pyramid?
     % change 30?
     % use 5x5 neighborhood
-    if dim >= 30
+    if dim == 5
         % padding to add zeros around for border
         padded = zeros([width,length]+4);
         padded(3:end-2,3:end-2) = P{level};
