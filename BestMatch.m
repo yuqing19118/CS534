@@ -1,4 +1,4 @@
-function [ x, y ] = BestMatch( featuresA3x3, featuresA5x5, featuresAprime3x3, featuresAprime5x5, featuresB3x3, featuresB5x5, gpA, gpAprime, gpB, gpBprime, flannA, flannB, s, level, row, col )
+function [ x, y, which ] = BestMatch( featuresA3x3, featuresA5x5, featuresAprime3x3, featuresAprime5x5, featuresB3x3, featuresB5x5, gpA, gpAprime, gpB, gpBprime, flannA, flannB, s, level, row, col )
 % BestMatch using FLANN and BestCoherenceMatch
 
 [ xapp, yapp ] = BestApproximateMatch( gpA, gpB, flannA, flannB, level, row, col );
@@ -14,8 +14,8 @@ if xapp3x3 == 0 || yapp3x3 == 0
     yapp3x3 = 1;
 end
 % find closest corresponding pixel in coarse level
-xcoh3x3 = floor(xcoh);
-ycoh3x3 = floor(ycoh);
+xcoh3x3 = floor(xcoh/2);
+ycoh3x3 = floor(ycoh/2);
 % if first row and/or first col, set it to (1,1)
 if xcoh3x3 == 0 || ycoh3x3 == 0 
     xcoh3x3 = 1;
@@ -23,15 +23,25 @@ if xcoh3x3 == 0 || ycoh3x3 == 0
 end
 
 % get fvapp
-fvAapp3x3 = featuresA3x3{level}{xapp3x3, yapp3x3};
-fvAprimeapp3x3 = featuresAprime3x3{level}{xapp3x3, yapp3x3};
+if level < size(featuresA3x3,2) && xapp3x3 <= size(featuresA3x3{level+1},1) && yapp3x3 <= size(featuresA3x3{level+1},2)
+    fvAapp3x3 = featuresA3x3{level+1}{xapp3x3, yapp3x3};
+    fvAprimeapp3x3 = featuresAprime3x3{level+1}{xapp3x3, yapp3x3};
+else
+    fvAapp3x3 = zeros(1,9);
+    fvAprimeapp3x3 = zeros(1,9);
+end
 fvAapp5x5 = featuresA5x5{level}{xapp, yapp};
 fvAprimeapp5x5 = featuresAprime5x5{level}{xapp, yapp};
 fvapp = [fvAapp3x3 fvAprimeapp3x3 fvAapp5x5 fvAprimeapp5x5];
 
 % get fvcoh
-fvAcoh3x3 = featuresA3x3{level}{xcoh3x3, ycoh3x3};
-fvAprimecoh3x3 = featuresAprime3x3{level}{xcoh3x3, ycoh3x3};
+if level < size(featuresA3x3,2) && xcoh3x3 <= size(featuresA3x3{level+1},1) && ycoh3x3 <= size(featuresA3x3{level+1},2)
+    fvAcoh3x3 = featuresA3x3{level+1}{xcoh3x3, ycoh3x3};
+    fvAprimecoh3x3 = featuresAprime3x3{level+1}{xcoh3x3, ycoh3x3};
+else
+    fvAcoh3x3 = zeros(1,9);
+    fvAprimecoh3x3 = zeros(1,9);
+end
 fvAcoh5x5 = featuresA5x5{level}{xcoh, ycoh};
 fvAprimecoh5x5 = featuresAprime5x5{level}{xcoh, ycoh};
 fvcoh = [fvAcoh3x3 fvAprimecoh3x3 fvAcoh5x5 fvAprimecoh5x5];
@@ -45,14 +55,19 @@ if row3x3 == 0 || col3x3 == 0 || row3x3 == 1 || col3x3 == 1
     row3x3 = 3;
     col3x3 = 3;
 end
-fvB3x3 = featuresB3x3{level}{row3x3, col3x3};
+if level < size(featuresB3x3,2) && row3x3 <= size(featuresB3x3{level+1},1) && col3x3 <= size(featuresB3x3{level+1},2)
+    fvB3x3 = featuresB3x3{level+1}{row3x3, col3x3};
+else
+    fvB3x3 = zeros(1,9);
+end
 fvB5x5 = featuresB5x5{level}{row, col};
 
 % avoid border pixels
-if (row > 2 && row < size(featuresAprime5x5{level},1)-1) && ... 
-(col > 2 && col < size(featuresAprime5x5{level},2)-1)
+if level < size(gpBprime,2) && row >= 3 && row < size(gpBprime{level},1)-1 && col >=3 && col < size(gpBprime{level},2)-1
+    
+    [ rowprev, colprev ] =  FindPrevLevCoords( row, col, gpBprime, level );
     % get fvBprime
-    fvBprimematrix3x3 = gpBprime{level}(row3x3-1:row3x3+1,col3x3-1:col3x3+1);
+    fvBprimematrix3x3 = gpBprime{level+1}(rowprev-1:rowprev+1,colprev-1:colprev+1);
     fvBprime3x3 = reshape(fvBprimematrix3x3.',[1,9]);
     fvBprimematrix5x5 = gpBprime{level}(row-2:row+2,col-2:col+2);
     fvBprime5x5 = reshape(fvBprimematrix5x5.',[1,25]);
@@ -78,9 +93,11 @@ kappa = 5;
 if dcoh <= dapp * (1 + 2^(level - size(gpB,2) * kappa))
     x = xcoh;
     y = ycoh;
+    which = 'coh';
 else
     x = xapp;
     y = yapp;
+    which = 'app';
 end
 
 end
