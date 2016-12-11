@@ -1,9 +1,9 @@
 clear;
 
 % read input images
-A = imread('images/rhoneA.jpg');
-Aprime = imread('images/rhoneAprime.jpg');
-B = imread('images/rhoneB.jpg');
+A = imread('images/identityA.jpg');
+Aprime = imread('images/identityAprime.jpg');
+B = imread('images/identityB.jpg');
 
 % RGB to YIQ color space
 yiqA = rgb2ntsc(A);
@@ -34,25 +34,14 @@ featuresB5x5 = ComputeFeatures(gpB,5);
 flannA = InitializeSearchStructures(featuresA5x5);
 flannB = InitializeSearchStructures(featuresB5x5);
 
-%{
-% compute Bprime, pixel by pixel
-gpBprime = cell(1,size(featuresB,2));
-for row = 1:size(featuresB{1},1)
-    for col = 1:size(featuresB{1},2)
-        [ x, y ] = BestApproximateMatch(gpA, gpB, flannA, flannB, 1, row, col);
-        gpBprime{1}(row, col) = gpAprime{1}(x,y);
-    end
-end
-%}
-
-% trying the smallest level
-% compute Bprime, pixel by pixel
+% initialize Bprime
 gpBprime = cell(1,size(featuresB5x5,2));
 % make gpBprime full of zeros
 for level = 1:size(gpB,2)
     gpBprime{level} = zeros(size(gpB{level},1),size(gpB{level},2));
 end
 
+% initialize s
 s = cell(1,size(featuresB5x5,2));
 % make s full of zeros
 for level = 1:size(gpB,2)
@@ -63,18 +52,19 @@ for level = 1:size(gpB,2)
     end
 end
 
+% tracking which match is used, approximate or coherence
 track = cell(1,size(featuresB5x5,2));
-% make s full of zeros
+% make it full of zeros
 for level = 1:size(gpB,2)
     for row = 1:size(gpB{level},1)
         for col = 1:size(gpB{level},2)
-            track{level}{row, col} = zeros(1,2);
+            track{level}{row, col} = zeros(1,1);
         end
     end
 end
 
-% image analogy, change level in 6 places in the following lines
-for level = size(gpBprime,2): -1 : 1
+% image analogy
+for level = 3 : -1 : 1
     for row = 1:size(featuresB5x5{level},1)
         for col = 1:size(featuresB5x5{level},2)
             [ x, y, which ] = BestMatch(featuresA3x3, featuresA5x5, featuresAprime3x3, featuresAprime5x5, featuresB3x3, featuresB5x5, gpA, gpAprime, gpB, gpBprime, flannA, flannB, s, level, row, col);
@@ -85,22 +75,6 @@ for level = size(gpBprime,2): -1 : 1
     end
 end
 
-% for all levels
-%{
-% compute Bprime, pixel by pixel
-gpBprime = cell(1,size(featuresB,2));
-s = cell(1,size(featuresB,2));
-for level = size(gpBprime,2):1
-    for row = 1:size(featuresB{level},1)
-        for col = 1:size(featuresB{level},2)
-            [ x, y ] = BestMatch(featuresA, featuresAprime, featuresB, gpBprime, flannA, flannB, s, level, row, col);
-            gpBprime{level}(row, col) = gpAprime{level}(x,y);
-            s{level}(row, col) = [ x, y ];
-        end
-    end
-end
-%}
-
 % get Y channel of Bprime
 yBprime = gpBprime{1};
 % combine with original IQ channels
@@ -110,11 +84,11 @@ yiqBprime = cat(3, yBprime,yiqB(:,:,2),yiqB(:,:,3));
 Bprime = ntsc2rgb(yiqBprime);
 %imwrite(Bprime, 'images/bigBprime.jpg', 'jpg');
 
-
+% to look at one level of Bprime
 yBprime = gpBprime{2};
 resize = imresize(B,size(gpBprime{2}));
 yiqBsmall = rgb2ntsc(resize);
 yiqBprime = cat(3, yBprime,yiqBsmall(:,:,2),yiqBsmall(:,:,3));
 Bprime = ntsc2rgb(yiqBprime);
 imshow(Bprime);
-imwrite(Bprime, 'images/bigBprimelevel2.jpg', 'jpg');
+%imwrite(Bprime, 'images/bigBprimelevel2.jpg', 'jpg');

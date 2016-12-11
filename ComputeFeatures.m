@@ -4,6 +4,37 @@ function [ F ] = ComputeFeatures( P , dim )
 % F is a cell which contains a cell for each level of P
 F = cell(1, size(P,2));
 
+% padding of 2 for 5x5
+if dim == 5
+    pad = 2;
+else
+    % padding of 1 for 3x3
+    pad = 1;
+end
+
+% maybe revise this to not use a loop for speed
+for level = 1:size(P,2)
+    width = size(P{level},1);
+    length = size(P{level},2);
+    features = cell(width, length);
+    
+    % fill inside first
+    for r = 1 : width
+        for c = 1 : length
+            % get coords
+            [ row, col ] = FindBorderCoords(r, c, P, level, pad);
+            neighborhood = P{level}(row-pad:row+pad,col-pad:col+pad);
+            featureVector = reshape(neighborhood.',1,[]);
+            features{r,c} = featureVector;
+        end
+    end
+    F{level} = features;
+end
+
+%{
+% F is a cell which contains a cell for each level of P
+F = cell(1, size(P,2));
+
 % maybe revise this to not use a loop for speed
 for level = 1:size(P,2)
     width = size(P{level},1);
@@ -41,5 +72,6 @@ for level = 1:size(P,2)
         F{level} = features;
     end
 end
+%}
 
 end

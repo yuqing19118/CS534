@@ -65,7 +65,7 @@ fvB5x5 = featuresB5x5{level}{row, col};
 % avoid border pixels
 if level < size(gpBprime,2) && row >= 3 && row < size(gpBprime{level},1)-1 && col >=3 && col < size(gpBprime{level},2)-1
     
-    [ rowprev, colprev ] =  FindPrevLevCoords( row, col, gpBprime, level );
+    [ rowprev, colprev ] = FindPrevLevCoords( row, col, gpBprime, level );
     % get fvBprime
     fvBprimematrix3x3 = gpBprime{level+1}(rowprev-1:rowprev+1,colprev-1:colprev+1);
     fvBprime3x3 = reshape(fvBprimematrix3x3.',[1,9]);
@@ -85,12 +85,12 @@ gvec5x5 = reshape(g5x5,[1,25]);
 % make it match size of fvapp, fvcoh, fvq
 gauss = [gvec3x3 gvec3x3 gvec5x5 gvec5x5];
 
-dapp = sum(gauss(:,1:55).* (fvapp(:,1:55) - fvq(:,1:55))).^2;
-dcoh = sum(gauss(:,1:55).* (fvcoh(:,1:55) - fvq(:,1:55))).^2;
+dapp = sum(gauss(:,1:55).* (fvapp(:,1:55) - fvq(:,1:55)).^2);
+dcoh = sum(gauss(:,1:55).* (fvcoh(:,1:55) - fvq(:,1:55)).^2);
 
 % maybe change value of kappa
-kappa = 5;
-if dcoh <= dapp * (1 + 2^(level - size(gpB,2) * kappa))
+kappa = 0;
+if dcoh <= dapp * (1 + 2^(level - size(gpB,2)) * kappa)
     x = xcoh;
     y = ycoh;
     which = 'coh';
