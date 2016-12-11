@@ -1,9 +1,9 @@
 clear;
 
 % read input images
-A = imread('images/identityA.jpg');
-Aprime = imread('images/identityAprime.jpg');
-B = imread('images/identityB.jpg');
+A = imread('images/rhoneA.jpg');
+Aprime = imread('images/rhoneAprime.jpg');
+B = imread('images/rhoneB.jpg');
 
 % RGB to YIQ color space
 yiqA = rgb2ntsc(A);
@@ -64,7 +64,8 @@ for level = 1:size(gpB,2)
 end
 
 % image analogy
-for level = 3 : -1 : 1
+L = size(gpBprime,2);
+for level = L : -1 : 1
     for row = 1:size(featuresB5x5{level},1)
         for col = 1:size(featuresB5x5{level},2)
             [ x, y, which ] = BestMatch(featuresA3x3, featuresA5x5, featuresAprime3x3, featuresAprime5x5, featuresB3x3, featuresB5x5, gpA, gpAprime, gpB, gpBprime, flannA, flannB, s, level, row, col);
