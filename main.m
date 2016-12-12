@@ -83,7 +83,7 @@ yiqBprime = cat(3, yBprime,yiqB(:,:,2),yiqB(:,:,3));
 
 % YIQ to RGB
 Bprime = ntsc2rgb(yiqBprime);
-imwrite(Bprime, 'images/pastelBprime_kappa=10.jpg', 'jpg');
+imwrite(Bprime, 'images/pastelBprime_kappa=2.jpg', 'jpg');
 
 % to look at one level of Bprime
 yBprime = gpBprime{2};
@@ -92,4 +92,4 @@ yiqBsmall = rgb2ntsc(resize);
 yiqBprime = cat(3, yBprime,yiqBsmall(:,:,2),yiqBsmall(:,:,3));
 Bprime = ntsc2rgb(yiqBprime);
 imshow(Bprime);
-%imwrite(Bprime, 'images/pastelBprimelevel2_kappa=10.jpg', 'jpg');
+imwrite(Bprime, 'images/pastelBprimelevel2_kappa=2.jpg', 'jpg');
