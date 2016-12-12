@@ -1,9 +1,9 @@
 clear;
 
 % read input images
-A = imread('images/bigA.jpg');
-Aprime = imread('images/bigAprime.jpg');
-B = imread('images/bigB.jpg');
+A = imread('images/pastelA.jpg');
+Aprime = imread('images/pastelAprime.jpg');
+B = imread('images/pastelB.jpg');
 
 % RGB to YIQ color space
 yiqA = rgb2ntsc(A);
@@ -19,8 +19,8 @@ yB = yiqB(:,:,1);
 [ remapA, remapAprime ] = LuminanceRemapping( yA, yAprime, yB );
 
 % compute Gaussian Pyramids for A, Aprime, B
-gpA = ComputeGaussianPyramid(yA);
-gpAprime = ComputeGaussianPyramid(yAprime);
+gpA = ComputeGaussianPyramid(remapA);
+gpAprime = ComputeGaussianPyramid(remapAprime);
 gpB = ComputeGaussianPyramid(yB);
 
 % compute features for A, Aprime, B
@@ -83,7 +83,7 @@ yiqBprime = cat(3, yBprime,yiqB(:,:,2),yiqB(:,:,3));
 
 % YIQ to RGB
 Bprime = ntsc2rgb(yiqBprime);
-%imwrite(Bprime, 'images/bigBprime.jpg', 'jpg');
+imwrite(Bprime, 'images/pastelBprime_kappa=10.jpg', 'jpg');
 
 % to look at one level of Bprime
 yBprime = gpBprime{2};
@@ -92,4 +92,4 @@ yiqBsmall = rgb2ntsc(resize);
 yiqBprime = cat(3, yBprime,yiqBsmall(:,:,2),yiqBsmall(:,:,3));
 Bprime = ntsc2rgb(yiqBprime);
 imshow(Bprime);
-%imwrite(Bprime, 'images/bigBprimelevel2_kappa=10.jpg', 'jpg');
+%imwrite(Bprime, 'images/pastelBprimelevel2_kappa=10.jpg', 'jpg');
