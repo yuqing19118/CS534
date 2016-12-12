@@ -1,9 +1,9 @@
 clear;
 
 % read input images
-A = imread('images/rhoneA.jpg');
-Aprime = imread('images/rhoneAprime.jpg');
-B = imread('images/rhoneB.jpg');
+A = imread('images/bigA.jpg');
+Aprime = imread('images/bigAprime.jpg');
+B = imread('images/bigB.jpg');
 
 % RGB to YIQ color space
 yiqA = rgb2ntsc(A);
@@ -92,4 +92,4 @@ yiqBsmall = rgb2ntsc(resize);
 yiqBprime = cat(3, yBprime,yiqBsmall(:,:,2),yiqBsmall(:,:,3));
 Bprime = ntsc2rgb(yiqBprime);
 imshow(Bprime);
-%imwrite(Bprime, 'images/bigBprimelevel2.jpg', 'jpg');
+%imwrite(Bprime, 'images/bigBprimelevel2_kappa=10.jpg', 'jpg');

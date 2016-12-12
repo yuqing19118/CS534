@@ -89,7 +89,7 @@ dapp = sum(gauss(:,1:55).* (fvapp(:,1:55) - fvq(:,1:55)).^2);
 dcoh = sum(gauss(:,1:55).* (fvcoh(:,1:55) - fvq(:,1:55)).^2);
 
 % maybe change value of kappa
-kappa = 0;
+kappa = 10;
 if dcoh <= dapp * (1 + 2^(level - size(gpB,2)) * kappa)
     x = xcoh;
     y = ycoh;
