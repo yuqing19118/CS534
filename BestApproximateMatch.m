@@ -11,8 +11,8 @@ testset = flannB{level}(:,pixel);
 
 % set default params; tweak these?
 params.algorithm = 'kdtree';
-params.trees = 1;
-params.checks = 1;
+params.trees = 5;
+params.checks = 10;
 
 % do FLANN search to find NN in A
 result = flann_search(dataset,testset,1,params);

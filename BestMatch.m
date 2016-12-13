@@ -27,8 +27,8 @@ else
 end
 
 % avoid using unsynthesized portion, so subtract 13 at the end
-dapp = sum(gauss(:,1:end-13).* (fvapp(:,1:end-13) - fvq(:,1:end-13)).^2);
-dcoh = sum(gauss(:,1:end-13).* (fvcoh(:,1:end-13) - fvq(:,1:end-13)).^2);
+dapp = sum((gauss(:,1:end-13).* (fvapp(:,1:end-13) - fvq(:,1:end-13))).^2);
+dcoh = sum((gauss(:,1:end-13).* (fvcoh(:,1:end-13) - fvq(:,1:end-13))).^2);
 
 % maybe change value of kappa
 kappa = 2;

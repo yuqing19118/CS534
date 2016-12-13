@@ -1,9 +1,9 @@
 clear;
 
 % read input images
-A = imread('images/pastelA.jpg');
-Aprime = imread('images/pastelAprime.jpg');
-B = imread('images/pastelB.jpg');
+A = imread('images/wcA.jpg');
+Aprime = imread('images/wcAprime.jpg');
+B = imread('images/wcB.jpg');
 
 % RGB to YIQ color space
 yiqA = rgb2ntsc(A);
@@ -83,7 +83,7 @@ yiqBprime = cat(3, yBprime,yiqB(:,:,2),yiqB(:,:,3));
 
 % YIQ to RGB
 Bprime = ntsc2rgb(yiqBprime);
-imwrite(Bprime, 'images/pastelBprime_kappa=2.jpg', 'jpg');
+%imwrite(Bprime, 'images/pastelBprime_kappa=2.jpg', 'jpg');
 
 % to look at one level of Bprime
 yBprime = gpBprime{2};
@@ -92,4 +92,4 @@ yiqBsmall = rgb2ntsc(resize);
 yiqBprime = cat(3, yBprime,yiqBsmall(:,:,2),yiqBsmall(:,:,3));
 Bprime = ntsc2rgb(yiqBprime);
 imshow(Bprime);
-imwrite(Bprime, 'images/pastelBprimelevel2_kappa=2.jpg', 'jpg');
+imwrite(Bprime, 'images/wcBprimelevel2_gw_kappa=2.jpg', 'jpg');
