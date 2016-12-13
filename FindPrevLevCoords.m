@@ -44,10 +44,10 @@ else
     colprev = floor(col/2);
 end
 
-%{
-coords{row, col} = [rowprev colprev];
-end
-end
-
+    %{
+        coords{row, col} = [rowprev colprev];
+    end
 end
 %}
+end
+
