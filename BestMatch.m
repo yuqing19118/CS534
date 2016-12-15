@@ -27,8 +27,29 @@ else
 end
 
 % avoid using unsynthesized portion, so subtract 13 at the end
-dapp = sum((gauss(:,1:end-13).* (fvapp(:,1:end-13) - fvq(:,1:end-13))).^2);
-dcoh = sum((gauss(:,1:end-13).* (fvcoh(:,1:end-13) - fvq(:,1:end-13))).^2);
+G = gauss(:,1:end-13);
+Fapp = fvapp(:,1:end-13);
+Fcoh = fvcoh(:,1:end-13);
+Fq = fvq(:,1:end-13);
+
+% compute Gaussian weighted distances
+gwapp = G.* (Fapp - Fq);
+gwcoh = G.* (Fcoh - Fq);
+
+% normalize
+% check if this is the top level (feature vector has length 37) or not the
+% top level (feature vector has length 55)
+if level == size(gpBprime,2)
+    napp = [ gwapp(1:25)/25 gwapp(26:end)/12 ];
+    ncoh = [ gwcoh(1:25)/25 gwcoh(26:end)/12 ];
+else
+    napp = [ gwapp(1:18)/9 gwapp(19:43)/25 gwapp(44:end)/12 ];
+    ncoh = [ gwcoh(1:18)/9 gwcoh(19:43)/25 gwcoh(44:end)/12 ];
+end
+
+% find SSD
+dapp = sum(napp.^2);
+dcoh = sum(ncoh.^2);
 
 % maybe change value of kappa
 kappa = 2;
