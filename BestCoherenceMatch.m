@@ -1,14 +1,13 @@
 function [ best_coh_row,best_coh_col ] = BestCoherenceMatch( gpA, gpAprime, gpB, gpBprime, featuresA3x3, featuresA5x5, featuresAprime3x3, featuresAprime5x5, featuresB3x3, featuresB5x5, s, level, qrow, qcol )
 
-fvq = MakeF(qrow, qcol, featuresB3x3, gpBprime, featuresB5x5, gpBprime, level, true);
-
-mindist = inf;
-[boundrow, boundcol]=size(gpA{level});
-
 % default values for best_coh_row and best_coh_col
 best_coh_row = 1;
 best_coh_col = 1;
 
+fvq = MakeF(qrow, qcol, featuresB3x3, gpBprime, featuresB5x5, gpBprime, level, true);
+
+mindist = inf;
+[boundrow, boundcol]=size(gpA{level});
 
 for ri = qrow-2 : qrow+2
     for rj = qcol-2 : qcol+2
