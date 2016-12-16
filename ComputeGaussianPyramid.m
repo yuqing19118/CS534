@@ -12,7 +12,7 @@ l = 2;
 Yl = Y;
 
 % set 50 kind of arbitrarily... what smallest pyramid size should be set?
-while dim >= 50
+while dim >= 300
     Yl = impyramid(Yl, 'reduce');
     P{l} = Yl;
 	l = l + 1;
