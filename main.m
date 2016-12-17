@@ -1,9 +1,9 @@
 clear;
 
 % read input images
-A = imread('images/spatterA.jpg');
-Aprime = imread('images/spatterAprime.jpg');
-B = imread('images/spatterB.jpg');
+A = imread('images/crystalA.jpg');
+Aprime = imread('images/crystalAprime.jpg');
+B = imread('images/crystalB.jpg');
 
 % RGB to YIQ color space
 yiqA = rgb2ntsc(A);
@@ -85,7 +85,7 @@ yiqBprime = cat(3, yBprime,yiqB(:,:,2),yiqB(:,:,3));
 Bprime = ntsc2rgb(yiqBprime);
 %imwrite(Bprime, 'images/pastelBprime_kappa=2.jpg', 'jpg');
 
-%{
+
 % to look at one level of Bprime
 yBprime = gpBprime{2};
 resize = imresize(B,size(gpBprime{2}));
@@ -93,5 +93,13 @@ yiqBsmall = rgb2ntsc(resize);
 yiqBprime = cat(3, yBprime,yiqBsmall(:,:,2),yiqBsmall(:,:,3));
 Bprime = ntsc2rgb(yiqBprime);
 imshow(Bprime);
-imwrite(Bprime, 'images/oilBprimelevel2_kappa=5.jpg', 'jpg');
-%}
+imwrite(Bprime, 'images/crystalBprimelevel2_kappa=2.jpg', 'jpg');
+
+% to look at one level of Bprime
+yBprime = gpBprime{1};
+resize = imresize(B,size(gpBprime{1}));
+yiqBsmall = rgb2ntsc(resize);
+yiqBprime = cat(3, yBprime,yiqBsmall(:,:,2),yiqBsmall(:,:,3));
+Bprime = ntsc2rgb(yiqBprime);
+imshow(Bprime);
+imwrite(Bprime, 'images/crystalBprimelevel1_kappa=2.jpg', 'jpg');
