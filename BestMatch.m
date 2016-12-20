@@ -52,7 +52,7 @@ dapp = sum(napp.^2);
 dcoh = sum(ncoh.^2);
 
 % maybe change value of kappa
-kappa = 2;
+kappa = 12;
 if dcoh <= dapp * (1 + 2^(level - L) * kappa)
     x = xcoh;
     y = ycoh;
